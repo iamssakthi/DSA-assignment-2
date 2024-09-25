@@ -1,0 +1,180 @@
+#include <stdio.h>
+#include <string.h>
+
+#define MAX 100
+#define NAME_LENGTH 50
+
+int total_students = 0;
+
+// Function to create a list of student names
+void createList(char students[][NAME_LENGTH]) {
+int n;
+printf("Enter the number of students to add: ");
+scanf("%d", &n);
+getchar(); // To consume newline character left by scanf
+for (int i = 0; i < n; i++) {
+printf("Enter student name %d: ", i + 1);
+fgets(students[total_students], NAME_LENGTH, stdin);
+students[total_students][strcspn(students[total_students], "\n")] = '\0'; // Remove newline character
+total_students++;
+}
+}
+
+// Function to insert a student at a specific position
+void insertStudent(char students[][NAME_LENGTH]) {
+if (total_students >= MAX) {
+printf("The list is full!\n");
+return;
+}
+int position;
+char name[NAME_LENGTH];
+printf("Enter the name of the new student: ");
+getchar(); // To consume newline character left by previous input
+fgets(name, NAME_LENGTH, stdin);
+name[strcspn(name, "\n")] = '\0'; // Remove newline character
+
+printf("Enter the position (0 to %d) to insert the student: ", total_students);
+scanf("%d", &position);
+
+if (position < 0 || position > total_students) {
+printf("Invalid position!\n");
+return;
+}
+
+// Shift the array elements to the right to make space for the new student
+for (int i = total_students; i > position; i--) {
+strcpy(students[i], students[i - 1]);
+}
+
+strcpy(students[position], name);
+total_students++;
+}
+
+// Function to delete a student by name or index
+void deleteStudent(char students[][NAME_LENGTH]) {
+int choice;
+printf("Delete by (1) Index or (2) Name? ");
+scanf("%d", &choice);
+
+if (choice == 1) {
+int index;
+printf("Enter the index of the student to delete (0 to %d): ", total_students - 1);
+scanf("%d", &index);
+
+if (index < 0 || index >= total_students) {
+printf("Invalid index!\n");
+return;
+}
+
+// Shift the array elements to the left to fill the gap
+for (int i = index; i < total_students - 1; i++) {
+strcpy(students[i], students[i + 1]);
+
+}
+
+total_students--;
+} else if (choice == 2) {
+char name[NAME_LENGTH];
+printf("Enter the name of the student to delete: ");
+getchar(); // To consume newline character
+fgets(name, NAME_LENGTH, stdin);
+name[strcspn(name, "\n")] = '\0'; // Remove newline character
+
+int found = 0;
+for (int i = 0; i < total_students; i++) {
+if (strcmp(students[i], name) == 0) {
+// Shift the array elements to the left to fill the gap
+for (int j = i; j < total_students - 1; j++) {
+strcpy(students[j], students[j + 1]);
+}
+total_students--;
+found = 1;
+break;
+}
+}
+
+if (!found) {
+printf("Student not found!\n");
+}
+} else {
+printf("Invalid choice!\n");
+}
+}
+
+// Function to traverse and display the list of students
+void traverseList(char students[][NAME_LENGTH]) {
+if (total_students == 0) {
+printf("The list is empty!\n");
+} else {
+printf("List of students:\n");
+
+for (int i = 0; i < total_students; i++) {
+printf("%d. %s\n", i + 1, students[i]);
+}
+}
+}
+
+// Function to search for a student by name
+void searchStudent(char students[][NAME_LENGTH]) {
+char name[NAME_LENGTH];
+printf("Enter the name of the student to search: ");
+getchar(); // To consume newline character left by previous input
+fgets(name, NAME_LENGTH, stdin);
+name[strcspn(name, "\n")] = '\0'; // Remove newline character
+
+int found = 0;
+for (int i = 0; i < total_students; i++) {
+if (strcmp(students[i], name) == 0) {
+printf("Student '%s' found at position %d.\n", name, i + 1);
+found = 1;
+break;
+}
+}
+
+if (!found) {
+printf("Student not found!\n");
+}
+}
+
+int main() {
+char students[MAX][NAME_LENGTH];
+int choice;
+
+while (1) {
+printf("\nStudent Management System\n");
+printf("1. Create List\n");
+printf("2. Insert Student\n");
+printf("3. Delete Student\n");
+
+printf("4. Traverse List\n");
+printf("5. Search for Student\n");
+printf("6. Exit\n");
+printf("Enter your choice: ");
+scanf("%d", &choice);
+
+switch (choice) {
+case 1:
+createList(students);
+break;
+case 2:
+insertStudent(students);
+break;
+case 3:
+deleteStudent(students);
+break;
+case 4:
+traverseList(students);
+break;
+case 5:
+searchStudent(students);
+break;
+case 6:
+printf("Exiting...\n");
+return 0;
+default:
+printf("Invalid choice! Please try again.\n");
+}
+}
+
+return 0;
+}
